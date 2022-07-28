@@ -12,8 +12,9 @@
       flex
       md:flex-col
       justify-between
-      bg-anodyne-500
-      text-anodyne-100
+      bg-anodyne-100
+      dark:bg-anodyne-700
+      text-anodyne-300
     "
   >
     <div>
@@ -47,13 +48,19 @@
         gap-3
         md:gap-5
         items-center
-        divide-x divide-anodyne-300/40 divide-solid
+        divide-x divide-anodyne-200 dark:divide-anodyne-500/40 divide-solid
         md:divide-x-0 md:divide-y
       "
     >
       <SunIcon
         @click="toggleTheme"
-        class="h-6 md:h-8 w-6 md:w-8 text-anodyne-300"
+        v-if="$colorMode.preference === 'dark'"
+        class="h-6 md:h-10 w-6 md:w-10 text-anodyne-500 cursor-pointer"
+      />
+      <MoonIcon
+        @click="toggleTheme"
+        v-else
+        class="h-6 md:h-10 w-6 md:w-10 text-anodyne-500 cursor-pointer"
       />
       <div class="py-4 md:py-3 px-6 md:px-4 h-full grid place-items-center">
         <Avatar
@@ -65,7 +72,7 @@
 </template>
 
 <script>
-import { SunIcon } from "@heroicons/vue/solid";
+import { MoonIcon, SunIcon } from "@heroicons/vue/solid";
 
 export default {
   data() {
@@ -74,6 +81,7 @@ export default {
     };
   },
   components: {
+    MoonIcon,
     SunIcon,
   },
   methods: {

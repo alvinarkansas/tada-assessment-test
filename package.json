@@ -16,6 +16,7 @@
   "dependencies": {
     "@heroicons/vue": "^1.0.6",
     "@nuxt-hero-icons/solid": "^1.0.1",
-    "@nuxtjs/google-fonts": "^3.0.0-0"
+    "@nuxtjs/google-fonts": "^3.0.0-0",
+    "@pinia/nuxt": "^0.3.1"
   }
 }

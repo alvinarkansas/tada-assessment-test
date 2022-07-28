@@ -1,8 +1,15 @@
 <template>
   <NuxtLayout>
-    <div class="text-anodyne-600 dark:text-anodyne-100 dark:bg-anodyne-600">
+    <div
+      class="
+        text-anodyne-800
+        dark:text-anodyne-300
+        bg-anodyne-200
+        dark:bg-anodyne-800
+      "
+    >
       <Navbar />
-      <main class="mt-16 md:mt-0 md:ml-16 dark:bg-anodyne-600">
+      <main class="mt-16 md:mt-0 md:ml-16 dark:bg-anodyne-800">
         <div>
           <NuxtPage />
         </div>
@@ -10,6 +17,24 @@
     </div>
   </NuxtLayout>
 </template>
+
+<script>
+import store from "@/stores";
+
+export default {
+  methods: {
+    handleResize() {
+      console.log("???");
+      // store.$patch({ screenWidth: window.innerWidth });
+      store.computed.setScreenWidth(window.innerWidth);
+    },
+  },
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+  },
+};
+</script>
 
 <style>
 main {

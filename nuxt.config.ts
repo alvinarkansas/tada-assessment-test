@@ -12,7 +12,11 @@ export default defineNuxtConfig({
       },
     },
   },
-  buildModules: ["@nuxtjs/google-fonts", "@nuxt-hero-icons/solid/nuxt"],
+  buildModules: [
+    "@nuxtjs/google-fonts",
+    "@pinia/nuxt",
+    "@nuxt-hero-icons/solid/nuxt",
+  ],
   modules: ["@nuxtjs/color-mode"],
   colorMode: {
     classSuffix: "",
