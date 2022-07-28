@@ -1,32 +1,36 @@
 <template>
-  <section class="flex justify-between mb-8">
-    <div>
-      <h1 class="font-bold text-2xl">Invoices</h1>
-      <p>{{ invoices.length }} invoices</p>
-    </div>
+  <NuxtLayout name="default">
+    <section class="flex justify-between mb-8">
+      <div>
+        <h1 class="font-bold text-2xl">Invoices</h1>
+        <p>{{ invoices.length }} invoices</p>
+      </div>
 
-    <div class="flex gap-4 items-center">
-      <p>Filter</p>
-      <NuxtLink to="/create">
-        <Button>
-          <template #icon>
-            <PlusCircleIcon class="h-10 w-10 text-anodyne-100" />
-          </template>
-          {{ screenWidth < 768 ? "New" : "New Invoice" }}
-        </Button>
+      <div class="flex gap-4 items-center">
+        <p>Filter</p>
+        <NuxtLink to="/create">
+          <Button>
+            <template #icon>
+              <PlusCircleIcon class="h-10 w-10 text-anodyne-100" />
+            </template>
+            {{ screenWidth < 768 ? "New" : "New Invoice" }}
+          </Button>
+        </NuxtLink>
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-5">
+      <NuxtLink v-for="invoice in invoices" :key="invoice.id" to="/detail">
+        <InvoiceCard :detail="invoice" />
       </NuxtLink>
-    </div>
-  </section>
+    </section>
 
-  <section class="flex flex-col gap-5">
-    <NuxtLink v-for="invoice in invoices" :key="invoice.id" to="/detail">
-      <InvoiceCard :detail="invoice" />
-    </NuxtLink>
-  </section>
-
-  <Modal v-model="atCreatePage" @overlayClick="toIndexPage">
-    <NuxtChild />
-  </Modal>
+    <template #modal>
+      <Modal v-model="atCreatePage" @overlayClick="toIndexPage">
+        <NuxtChild />
+      </Modal>
+    </template>
+  </NuxtLayout>
 </template>;
 
 <script>
@@ -37,6 +41,9 @@ import { PlusCircleIcon } from "@heroicons/vue/solid";
 
 export default {
   name: "IndexPage",
+  setup() {
+    definePageMeta({ layout: false });
+  },
   components: {
     Button,
     Modal,

@@ -1,21 +1,21 @@
 <template>
-  <NuxtLayout>
-    <div
-      class="
-        text-anodyne-800
-        dark:text-anodyne-300
-        bg-anodyne-200
-        dark:bg-anodyne-800
-      "
-    >
-      <Navbar />
-      <main class="mt-16 md:mt-0 md:ml-16 dark:bg-anodyne-800">
-        <div>
-          <NuxtPage />
-        </div>
-      </main>
-    </div>
-  </NuxtLayout>
+  <div
+    class="
+      text-anodyne-800
+      dark:text-anodyne-300
+      bg-anodyne-200
+      dark:bg-anodyne-800
+    "
+  >
+    <Navbar />
+    <main class="mt-16 md:mt-0 md:ml-16 dark:bg-anodyne-800">
+      <div>
+        <slot />
+      </div>
+    </main>
+
+    <slot name="modal"></slot>
+  </div>
 </template>
 
 <script>

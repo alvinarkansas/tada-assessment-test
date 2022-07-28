@@ -2,11 +2,22 @@
   <button
     :type="type"
     :disabled="loading || disabled"
-    class="flex items-center justify-center font-semibold transition-all"
+    class="
+      flex
+      items-center
+      justify-center
+      font-semibold
+      hover:bg-opacity-80
+      rounded-full
+      bg-shade-200
+      transition-all
+    "
     :class="[
-      `bg-${bgColor} text-${color} hover:bg-opacity-80 rounded-full`,
       hasIconSlot ? 'p-1 pr-3' : 'py-[16.5px] px-6',
-      { 'cursor-not-allowed bg-opacity-30 hover:bg-opacity-30 text-anodyne-400': loading || disabled },
+      {
+        'cursor-not-allowed bg-opacity-30 hover:bg-opacity-30 text-anodyne-400':
+          loading || disabled,
+      },
     ]"
   >
     <div class="grid grid-flow-col auto-cols-max gap-2">
@@ -41,14 +52,6 @@
 export default {
   name: "Button",
   props: {
-    bgColor: {
-      type: String,
-      default: "shade-200",
-    },
-    color: {
-      type: String,
-      default: "anodyne-100",
-    },
     label: {
       type: String,
       default: "",
@@ -76,6 +79,9 @@ export default {
     },
     hasIconSlot() {
       return !!this.$slots["icon"];
+    },
+    getBgColor() {
+      return "bg-" + this.bgColor;
     },
   },
 };
