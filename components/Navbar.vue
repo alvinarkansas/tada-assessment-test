@@ -15,6 +15,7 @@
       bg-anodyne-100
       dark:bg-anodyne-700
       text-anodyne-300
+      z-[60]
     "
   >
     <div>
@@ -48,7 +49,9 @@
         gap-3
         md:gap-5
         items-center
-        divide-x divide-anodyne-200 dark:divide-anodyne-500/40 divide-solid
+        divide-x divide-anodyne-200
+        dark:divide-anodyne-500/40
+        divide-solid
         md:divide-x-0 md:divide-y
       "
     >

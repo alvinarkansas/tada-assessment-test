@@ -24,8 +24,6 @@ import store from "@/stores";
 export default {
   methods: {
     handleResize() {
-      console.log("???");
-      // store.$patch({ screenWidth: window.innerWidth });
       store.computed.setScreenWidth(window.innerWidth);
     },
   },

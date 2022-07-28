@@ -7,26 +7,31 @@
 
     <div class="flex gap-4 items-center">
       <p>Filter</p>
-      <Button>
-        <template #icon>
-          <PlusCircleIcon class="h-10 w-10 text-anodyne-100" />
-        </template>
-        {{ screenWidth < 768 ? "New" : "New Invoice" }}
-      </Button>
+      <NuxtLink to="/create">
+        <Button>
+          <template #icon>
+            <PlusCircleIcon class="h-10 w-10 text-anodyne-100" />
+          </template>
+          {{ screenWidth < 768 ? "New" : "New Invoice" }}
+        </Button>
+      </NuxtLink>
     </div>
   </section>
 
   <section class="flex flex-col gap-5">
-    <InvoiceCard
-      v-for="invoice in invoices"
-      :key="invoice.id"
-      :detail="invoice"
-    />
+    <NuxtLink v-for="invoice in invoices" :key="invoice.id" to="/detail">
+      <InvoiceCard :detail="invoice" />
+    </NuxtLink>
   </section>
+
+  <Modal v-model="atCreatePage" @overlayClick="toIndexPage">
+    <NuxtChild />
+  </Modal>
 </template>;
 
 <script>
 import Button from "@/components/Button.vue";
+import Modal from "@/components/Modal.vue";
 import store from "@/stores";
 import { PlusCircleIcon } from "@heroicons/vue/solid";
 
@@ -34,6 +39,7 @@ export default {
   name: "IndexPage",
   components: {
     Button,
+    Modal,
     PlusCircleIcon,
   },
   data() {
@@ -77,9 +83,17 @@ export default {
       ],
     };
   },
+  methods: {
+    toIndexPage() {
+      this.$router.push({ path: "/" });
+    },
+  },
   computed: {
     screenWidth() {
       return store.computed.screenWidth.get();
+    },
+    atCreatePage() {
+      return this.$route.fullPath === "/create";
     },
   },
 };
