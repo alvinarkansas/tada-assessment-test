@@ -16,8 +16,9 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@pinia/nuxt",
     "@nuxt-hero-icons/solid/nuxt",
+    "@nuxtjs/dayjs",
   ],
-  modules: ["@nuxtjs/color-mode", "@formkit/nuxt"],
+  modules: ["@nuxtjs/color-mode", "@formkit/nuxt", "@nuxtjs/strapi"],
   colorMode: {
     classSuffix: "",
   },

@@ -1,7 +1,14 @@
 <template>
   <div class="invoice-card">
-    <div class="flex justify-between mb-5 md:items-center md:mb-0 md:gap-6">
-      <p class="font-bold">
+    <div
+      class="
+        flex
+        justify-between
+        mb-5
+        md:items-center md:mb-0 md:gap-6 md:basis-1/2
+      "
+    >
+      <p class="font-bold md:min-w-[72px]">
         <span class="text-anodyne-500">#</span>{{ detail.id }}
       </p>
       <p
@@ -10,12 +17,14 @@
           dark:text-anodyne-300
           mb-1
           hidden
-          md:block
+          md:block md:flex-2
         "
       >
         Due {{ detail.due_date }}
       </p>
-      <p class="text-anodyne-500 dark:text-anodyne-300">{{ detail.name }}</p>
+      <p class="text-anodyne-500 dark:text-anodyne-300 md:flex-1">
+        {{ detail.name }}
+      </p>
     </div>
     <div class="flex justify-between items-center md:gap-6">
       <div class="md:flex md:items-center">
@@ -28,7 +37,7 @@
           {{ $currency(detail.amount) }}
         </p>
       </div>
-      <Badge :variant="detail.status === 'paid' ? 'success' : 'warning'">
+      <Badge :variant="detail.status">
         <span class="text-3xl">•</span>
         <span class="capitalize">{{ detail.status }}</span>
       </Badge>

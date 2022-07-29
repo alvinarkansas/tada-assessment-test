@@ -1,6 +1,10 @@
 <template>
   <NuxtLayout name="default">
-    <Button transparent class="bg-transparent mb-8" @click="$router.push({ path: '/' })">
+    <Button
+      transparent
+      class="bg-transparent mb-8"
+      @click="$router.push({ path: '/' })"
+    >
       <template #icon>
         <ChevronLeftIcon class="h-6 w-6" />
       </template>
@@ -12,7 +16,9 @@
         <span class="text-anodyne-500">#</span>XM9141
       </h1>
       <div class="flex items-center gap-4">
-        <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
+        <NuxtLink to="/detail/edit">
+          <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
+        </NuxtLink>
         <Button class="hidden md:flex bg-error-200">Delete</Button>
         <Button>Mark as Paid</Button>
       </div>
@@ -98,36 +104,45 @@
               </tbody>
             </table>
           </div>
-            <div
-              class="
-                flex
-                justify-between
-                py-8
-                px-6
-                text-anodyne-100
-                bg-anodyne-500
-                dark:bg-anodyne-800
-                text-2xl
-                font-semibold
-              "
-            >
-              <p>Total</p>
-              <p>{{ $currency(269900) }}</p>
-            </div>
+          <div
+            class="
+              flex
+              justify-between
+              py-8
+              px-6
+              text-anodyne-100
+              bg-anodyne-500
+              dark:bg-anodyne-800
+              text-2xl
+              font-semibold
+            "
+          >
+            <p>Total</p>
+            <p>{{ $currency(269900) }}</p>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="flex flex-col gap-4 md:hidden">
-      <Button class="bg-anodyne-500">Edit</Button>
+      <NuxtLink to="/detail/edit">
+        <Button class="bg-anodyne-500">Edit</Button>
+      </NuxtLink>
       <Button class="bg-error-200">Delete</Button>
     </section>
+
+    <template #modal>
+      <Modal v-model="atEditPage" @overlayClick="toDetailPage">
+        <NuxtChild />
+      </Modal>
+    </template>
   </NuxtLayout>
 </template>
 
 <script>
 import { ChevronLeftIcon } from "@heroicons/vue/solid";
 import Button from "@/components/Button.vue";
+import Modal from "@/components/Modal.vue";
 
 export default {
   name: "DetailPage",
@@ -137,9 +152,20 @@ export default {
   components: {
     Button,
     ChevronLeftIcon,
+    Modal,
+  },
+  methods: {
+    toDetailPage() {
+      this.$router.push({ path: "/detail" });
+    },
   },
   mounted() {
     console.log("Detail Page");
+  },
+  computed: {
+    atEditPage() {
+      return this.$route.fullPath === "/detail/edit";
+    },
   },
 };
 </script>

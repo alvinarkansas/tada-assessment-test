@@ -1,7 +1,7 @@
 <template>
   <div class="inner-modal-fixed overflow-auto">
-    <h1 class="text-2xl font-bold mb-8">Create New Invoice</h1>
-    <FormKit type="form" @submit="onSubmit" :actions="false">
+    <h1 class="text-2xl font-bold mb-8">Edit #....</h1>
+    <FormKit type="form" @submit="create" :actions="false">
       <section class="mb-5">
         <FormKit type="group" name="from">
           <p class="text-base text-shade-100 mb-4">Bill From</p>
@@ -91,7 +91,7 @@
       <section class="mb-8">
         <div class="flex gap-5">
           <FormKit
-            name="due_date"
+            name="invoice_date"
             type="date"
             label="Invoice Date"
             placeholder="Select invoice date"
@@ -187,7 +187,7 @@
         <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
           Cancel
         </Button>
-        <Button type="submit"> Create Invoice </Button>
+        <Button type="submit"> Save Changes </Button>
       </section>
     </FormKit>
   </div>
@@ -198,14 +198,10 @@ import { TrashIcon } from "@heroicons/vue/solid";
 import Button from "@/components/Button.vue";
 
 export default {
-  name: "CreatePage",
+  name: "EditPage",
   components: {
     Button,
     TrashIcon,
-  },
-  setup() {
-    const { create } = useStrapi4();
-    return { create };
   },
   data() {
     return {
@@ -221,62 +217,8 @@ export default {
       });
       this.items = filtered;
     },
-    generateInvoiceNumber() {
-      let result = "";
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const nums = "0123456789";
-
-      for (var i = 0; i < 2; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      for (var i = 0; i < 4; i++) {
-        result += nums.charAt(Math.floor(Math.random() * nums.length));
-      }
-      return result;
-    },
-    async onSubmit(value) {
-      let itemIds = [];
-      for (let item of this.items) {
-        const { data } = await this.create("invoice-items", {
-          name: item.name,
-          qty: item.qty,
-          price: item.price,
-        });
-        if (data.id) {
-          itemIds.push(data.id);
-        }
-      }
-      const payload = {
-        invoice_no: this.generateInvoiceNumber(),
-        description: value.description,
-        due_date: new Date(value.due_date).toISOString(),
-        payment_term: value.payment_term,
-        sender_city: value.from.city,
-        sender_country: value.from.country,
-        sender_street: value.from.street,
-        sender_zip: value.from.zip,
-        recipient_city: value.to.city,
-        recipient_country: value.to.country,
-        recipient_street: value.to.street,
-        recipient_zip: value.to.zip,
-        recipient_name: value.to.client_name,
-        recipient_email: value.to.email,
-        amount: this.grandTotal,
-        invoice_items: itemIds,
-      };
-
-
-      await this.create("invoices", payload);
-
-      console.log("create success");
-      this.$router.push({ path: "/" });
-    },
-  },
-  computed: {
-    grandTotal() {
-      return this.items
-        .map((item) => (item.qty || 0) * (item.price || 0))
-        .reduce((prev, current) => prev + current, 0);
+    create(value) {
+      console.log("Submit", value);
     },
   },
 };

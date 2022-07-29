@@ -41,6 +41,6 @@ main {
 }
 main > div {
   @apply p-6 md:py-24;
-  @apply md:max-w-3xl md:mx-auto;
+  @apply md:max-w-4xl md:mx-auto;
 }
 </style>
