@@ -25,7 +25,7 @@
           Due {{ detail.due_date }}
         </p>
         <p class="text-2xl font-bold">
-          {{ currency(detail.amount) }}
+          {{ $currency(detail.amount) }}
         </p>
       </div>
       <Badge :variant="detail.status === 'paid' ? 'success' : 'warning'">
@@ -48,15 +48,6 @@ export default {
   props: {
     detail: {
       type: Object,
-    },
-  },
-  methods: {
-    currency(amount) {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "GBP",
-        minimumFractionDigits: 2,
-      }).format(amount);
     },
   },
 };

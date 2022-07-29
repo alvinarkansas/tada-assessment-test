@@ -14,6 +14,7 @@
     "
     :class="[
       hasIconSlot ? 'p-1 pr-3' : 'py-[16.5px] px-6',
+      transparent ? 'bg-transparent text-shade-200' : 'text-anodyne-100',
       {
         'cursor-not-allowed bg-opacity-30 hover:bg-opacity-30 text-anodyne-400':
           loading || disabled,
@@ -35,11 +36,11 @@
         <LoadingIcon :class="{ 'animate-spin': loading }" />
       </div>
       <div v-if="hasDefaultSlot" class="h-full w-full flex items-center">
-        <p v-if="!loading" class="leading-[15px] text-anodyne-100">
+        <p v-if="!loading" class="leading-[15px]">
           <slot></slot>
         </p>
         <template v-else>
-          <p v-if="loadingLabel" class="leading-[15px] text-anodyne-100">
+          <p v-if="loadingLabel" class="leading-[15px]">
             {{ loadingLabel }}
           </p>
         </template>
@@ -69,6 +70,10 @@ export default {
       default: "button",
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    transparent: {
       type: Boolean,
       default: false,
     },
