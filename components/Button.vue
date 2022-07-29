@@ -35,11 +35,11 @@
         <LoadingIcon :class="{ 'animate-spin': loading }" />
       </div>
       <div v-if="hasDefaultSlot" class="h-full w-full flex items-center">
-        <p v-if="!loading" class="leading-[15px]">
+        <p v-if="!loading" class="leading-[15px] text-anodyne-100">
           <slot></slot>
         </p>
         <template v-else>
-          <p v-if="loadingLabel" class="leading-[15px]">
+          <p v-if="loadingLabel" class="leading-[15px] text-anodyne-100">
             {{ loadingLabel }}
           </p>
         </template>

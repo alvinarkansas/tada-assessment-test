@@ -15,7 +15,7 @@
       bg-anodyne-100
       dark:bg-anodyne-700
       text-anodyne-300
-      z-[60]
+      md:z-[60]
     "
   >
     <div>

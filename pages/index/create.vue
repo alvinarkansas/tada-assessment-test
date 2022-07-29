@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inner-modal-fixed overflow-auto">
     <h1 class="text-2xl font-bold mb-8">Create New Invoice</h1>
     <FormKit type="form" @submit="create" :actions="false">
       <section class="mb-5">
@@ -126,7 +126,7 @@
       <section class="mb-8">
         <p class="text-xl font-semibold text-anodyne-400 mb-4">Item List</p>
         <FormKit name="items" v-model="items" type="list">
-          <div class="flex gap-5 mb-3">
+          <div class="hidden md:flex gap-5 mb-3">
             <p class="flex-[3]">Item Name</p>
             <p class="flex-[1]">Qty</p>
             <p class="flex-[2]">Price</p>
@@ -134,24 +134,35 @@
             <div class="flex-[1]" />
           </div>
           <FormKit v-for="(item, i) in items" :key="i" name="item" type="group">
+            <FormKit
+              name="name"
+              label="Item Name"
+              type="text"
+              placeholder="Type item name here"
+              outer-class="md:hidden mb-3"
+            />
             <div class="flex gap-5 items-center">
               <FormKit
                 name="name"
                 type="text"
                 placeholder="Type item name here"
-                outer-class="flex-[3] mb-3"
+                outer-class="hidden md:block flex-[3] mb-3"
               />
               <FormKit
                 name="qty"
+                label="Qty"
                 type="number"
                 placeholder="Type qty here"
                 outer-class="flex-[1] mb-3"
+                label-class="md:hidden"
               />
               <FormKit
                 name="price"
+                label="Price"
                 type="number"
                 placeholder="Type price here"
                 outer-class="flex-[2] mb-3"
+                label-class="md:hidden"
               />
               <p
                 class="mb-3 font-semibold flex-[1]"

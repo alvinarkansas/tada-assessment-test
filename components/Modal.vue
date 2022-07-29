@@ -77,6 +77,16 @@ export default {
       }
     },
   },
+  watch: {
+    modelValue(value) {
+      const body = document.querySelector("body");
+      if (value) {
+        body.style.overflowY = "hidden";
+      } else {
+        body.style.overflowY = "auto";
+      }
+    },
+  },
 };
 </script>
 
@@ -95,7 +105,7 @@ export default {
 
 .mobile-slide-up-enter-from,
 .mobile-slide-up-leave-to {
-  transform: translateX(100vw) !important;
+  transform: translateY(100vh) !important;
 }
 
 .fade-enter-active,
@@ -113,19 +123,19 @@ export default {
   @apply bottom-0 inset-x-0 md:right-auto md:top-0 md:left-0 overflow-y-auto md:max-w-[900px];
 }
 .modal-style::-webkit-scrollbar {
-  width: 6px;
+  @apply w-0 md:w-[6px];
 }
 .modal-style::-webkit-scrollbar-track {
-  @apply bg-anodyne-600;
+  @apply bg-anodyne-300 dark:bg-anodyne-600;
 }
 .modal-style::-webkit-scrollbar-thumb {
-  @apply bg-anodyne-500;
+  @apply bg-anodyne-100 dark:bg-anodyne-500;
 }
 .modal-style::-webkit-scrollbar-thumb:hover {
   @apply bg-shade-200;
 }
 .inner-modal-fixed {
-  height: 85vh;
+  @apply h-[85vh] md:h-auto;
 }
 .inner-modal-auto {
   height: auto;
