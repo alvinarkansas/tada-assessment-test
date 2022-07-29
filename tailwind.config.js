@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
+const formKitTailwind = require("@formkit/themes/tailwindcss");
 
 module.exports = {
   darkMode: "class",
@@ -8,6 +9,7 @@ module.exports = {
     "./components/**/*.{js,vue,ts}",
     "./layouts/**/*.vue",
     "./pages/**/*.vue",
+    "./formkit.config.js",
     "./plugins/**/*.{js,ts}",
     "./nuxt.config.{js,ts}",
   ],
@@ -49,5 +51,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [formKitTailwind],
 };

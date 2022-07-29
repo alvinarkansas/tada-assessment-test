@@ -29,7 +29,7 @@
         duration-500
         transform
       "
-      :class="violated ? 'bg-error-100' : 'bg-anodyne-100 dark:bg-anodyne-800'"
+      :class="violated ? 'bg-error-100' : 'bg-anodyne-200 dark:bg-anodyne-800'"
     >
       <slot></slot>
     </div>
@@ -110,8 +110,19 @@ export default {
 }
 
 .modal-style {
-  @apply bottom-0 inset-x-0 md:right-auto md:top-0 md:left-0;
-  /* @apply sm:-translate-x-1/2 sm:-translate-y-1/2; */
+  @apply bottom-0 inset-x-0 md:right-auto md:top-0 md:left-0 overflow-y-auto md:max-w-[900px];
+}
+.modal-style::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-style::-webkit-scrollbar-track {
+  @apply bg-anodyne-600;
+}
+.modal-style::-webkit-scrollbar-thumb {
+  @apply bg-anodyne-500;
+}
+.modal-style::-webkit-scrollbar-thumb:hover {
+  @apply bg-shade-200;
 }
 .inner-modal-fixed {
   height: 85vh;

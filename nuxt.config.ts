@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxt-hero-icons/solid/nuxt",
   ],
-  modules: ["@nuxtjs/color-mode"],
+  modules: ["@nuxtjs/color-mode", "@formkit/nuxt"],
   colorMode: {
     classSuffix: "",
   },
