@@ -202,7 +202,7 @@
       </section>
 
       <section class="flex gap-5 justify-end">
-        <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
+        <Button class="bg-anodyne-600" @click="$router.push({ path: '/detail/' + $route.params.id })">
           Cancel
         </Button>
         <Button type="submit"> Save Changes </Button>
@@ -300,7 +300,6 @@ export default {
     },
   },
   mounted() {
-    console.log("Edit Page 🏞️", this.detail);
     this.$formkit.get("sender_street")?.input(this.detail.sender_street);
     this.$formkit.get("sender_city")?.input(this.detail.sender_city);
     this.$formkit.get("sender_zip")?.input(this.detail.sender_zip);

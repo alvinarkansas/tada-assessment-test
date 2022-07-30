@@ -30,14 +30,38 @@
               rounded-lg
               shadow-lg
               flex flex-col
-              gap-4
-              p-4
+              gap-2
+              p-2
             "
           >
-            <button @click="filter = ''">All Status</button>
-            <button @click="filter = 'paid'">Paid</button>
-            <button @click="filter = 'pending'">Pending</button>
-            <button @click="filter = 'draft'">Draft</button>
+            <button
+              class="p-2 hover:bg-anodyne-700 rounded-md"
+              :class="{ 'bg-anodyne-700': filter === '' }"
+              @click="filter = ''"
+            >
+              All Status
+            </button>
+            <button
+              class="p-2 hover:bg-anodyne-700 rounded-md"
+              :class="{ 'bg-anodyne-700': filter === 'paid' }"
+              @click="filter = 'paid'"
+            >
+              Paid
+            </button>
+            <button
+              class="p-2 hover:bg-anodyne-700 rounded-md"
+              :class="{ 'bg-anodyne-700': filter === 'pending' }"
+              @click="filter = 'pending'"
+            >
+              Pending
+            </button>
+            <button
+              class="p-2 hover:bg-anodyne-700 rounded-md"
+              :class="{ 'bg-anodyne-700': filter === 'draft' }"
+              @click="filter = 'draft'"
+            >
+              Draft
+            </button>
           </div>
         </div>
 
@@ -107,30 +131,11 @@ export default {
   },
   data() {
     return {
-      invoices: [],
       dropdownOpen: false,
       filter: "",
     };
   },
   methods: {
-    async loadInvoices() {
-      const params = {
-        populate: "*",
-        sort: "id:desc",
-      };
-      if (this.filter) {
-        params["filters[status][$eq]"] = this.filter;
-      }
-      const { data } = await this.find("invoices", params);
-      this.invoices = data.map(({ attributes, id }) => ({
-        id,
-        invoice_no: attributes.invoice_no,
-        name: attributes.recipient_name,
-        due_date: this.$dayjs(attributes.due_date).format("DD MMM YYYY"),
-        amount: attributes.amount,
-        status: attributes.status,
-      }));
-    },
     toIndexPage() {
       this.$router.push({ path: "/" });
     },
@@ -142,18 +147,21 @@ export default {
     screenWidth() {
       return store.computed.screenWidth.get();
     },
+    invoices() {
+      return store.computed.invoices.get();
+    },
     atCreatePage() {
       return this.$route.fullPath === "/create";
     },
   },
   watch: {
-    filter() {
-      this.loadInvoices();
-      this.dropdownOpen = false;
+    filter(value) {
+      store.computed.loadInvoices({ filter: value });
+      this.closeDropdown();
     },
   },
   async mounted() {
-    this.loadInvoices();
+    store.computed.loadInvoices({});
   },
 };
 </script>

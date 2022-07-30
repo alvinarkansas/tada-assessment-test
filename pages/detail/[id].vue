@@ -201,6 +201,9 @@ export default {
     },
     async deleteInvoice() {
       await this._delete("invoices", this.$route.params.id);
+      for (let item of this.detail?.invoice_items?.data) {
+        await this._delete("invoice-items", item.id);
+      }
       this.$router.push({ path: "/" });
     },
     async markAsPaid() {

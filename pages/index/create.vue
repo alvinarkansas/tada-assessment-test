@@ -1,7 +1,7 @@
 <template>
   <div class="inner-modal-fixed overflow-auto">
     <h1 class="text-2xl font-bold mb-8">Create New Invoice</h1>
-    <FormKit type="form" @submit="onSubmit" :actions="false">
+    <FormKit id="invoice" type="form" @submit="onSubmit" :actions="false">
       <section class="mb-5">
         <FormKit type="group" name="from">
           <p class="text-base text-shade-100 mb-4">Bill From</p>
@@ -187,13 +187,17 @@
         <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
           Cancel
         </Button>
-        <Button type="submit"> Create Invoice </Button>
+        <Button @click="saveAsDraft" class="bg-anodyne-600"
+          >Save As Draft</Button
+        >
+        <Button type="submit">Create Invoice</Button>
       </section>
     </FormKit>
   </div>
 </template>
 
 <script>
+import store from "@/stores";
 import { TrashIcon } from "@heroicons/vue/solid";
 import Button from "@/components/Button.vue";
 
@@ -209,9 +213,8 @@ export default {
   },
   data() {
     return {
-      from: {},
-      to: {},
       items: [{}],
+      draft: false,
     };
   },
   methods: {
@@ -261,15 +264,22 @@ export default {
         recipient_zip: value.to.zip,
         recipient_name: value.to.client_name,
         recipient_email: value.to.email,
+        status: this.draft ? "draft" : "pending",
         amount: this.grandTotal,
         invoice_items: itemIds,
       };
 
-
       await this.create("invoices", payload);
 
-      console.log("create success");
+      store.computed.loadInvoices({});
+
       this.$router.push({ path: "/" });
+    },
+    saveAsDraft() {
+      this.draft = true;
+      setTimeout(() => {
+        this.$formkit.submit("invoice");
+      }, 100);
     },
   },
   computed: {
