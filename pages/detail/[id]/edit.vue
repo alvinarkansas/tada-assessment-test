@@ -1,11 +1,17 @@
 <template>
   <div class="inner-modal-fixed overflow-auto">
-    <h1 class="text-2xl font-bold mb-8">Edit #....</h1>
-    <FormKit type="form" @submit="create" :actions="false">
+    <h1 class="text-2xl font-bold mb-8">Edit #{{ detail?.invoice_no }}</h1>
+    <FormKit
+      type="form"
+      @submit="onSubmit"
+      :actions="false"
+      :value="formDetail"
+    >
       <section class="mb-5">
         <FormKit type="group" name="from">
           <p class="text-base text-shade-100 mb-4">Bill From</p>
           <FormKit
+            id="sender_street"
             name="street"
             type="text"
             label="Street Address"
@@ -14,6 +20,7 @@
           />
           <div class="flex gap-5">
             <FormKit
+              id="sender_city"
               name="city"
               type="text"
               label="City"
@@ -21,6 +28,7 @@
               validation="required"
             />
             <FormKit
+              id="sender_zip"
               name="zip"
               type="text"
               label="Post Code"
@@ -28,6 +36,7 @@
               validation="required"
             />
             <FormKit
+              id="sender_country"
               name="country"
               type="text"
               label="Country"
@@ -42,6 +51,7 @@
         <FormKit type="group" name="to">
           <p class="text-base text-shade-100 mb-4">Bill To</p>
           <FormKit
+            id="recipient_name"
             name="client_name"
             type="text"
             label="Client's Name"
@@ -49,6 +59,7 @@
             validation="required"
           />
           <FormKit
+            id="recipient_email"
             name="email"
             type="email"
             label="Client's Email"
@@ -56,6 +67,7 @@
             validation="required"
           />
           <FormKit
+            id="recipient_street"
             name="street"
             type="text"
             label="Street Address"
@@ -64,6 +76,7 @@
           />
           <div class="flex gap-5">
             <FormKit
+              id="recipient_city"
               name="city"
               type="text"
               label="City"
@@ -71,6 +84,7 @@
               validation="required"
             />
             <FormKit
+              id="recipient_zip"
               name="zip"
               type="text"
               label="Post Code"
@@ -78,6 +92,7 @@
               validation="required"
             />
             <FormKit
+              id="recipient_country"
               name="country"
               type="text"
               label="Country"
@@ -91,7 +106,8 @@
       <section class="mb-8">
         <div class="flex gap-5">
           <FormKit
-            name="invoice_date"
+            id="due_date"
+            name="due_date"
             type="date"
             label="Invoice Date"
             placeholder="Select invoice date"
@@ -99,6 +115,7 @@
             outer-class="flex-1"
           />
           <FormKit
+            id="payment_term"
             name="payment_term"
             type="select"
             label="Payment Terms"
@@ -116,6 +133,7 @@
         </div>
 
         <FormKit
+          id="description"
           name="description"
           type="text"
           label="Project Description"
@@ -203,11 +221,15 @@ export default {
     Button,
     TrashIcon,
   },
+  props: ["detail"],
+  setup() {
+    const { update, create, delete: _delete } = useStrapi4();
+    return { update, create, _delete };
+  },
   data() {
     return {
-      from: {},
-      to: {},
       items: [{}],
+      deletedIds: [],
     };
   },
   methods: {
@@ -217,9 +239,93 @@ export default {
       });
       this.items = filtered;
     },
-    create(value) {
+    async onSubmit(value) {
       console.log("Submit", value);
+      let itemIds = [];
+      for (let item of this.items) {
+        if (item.id) {
+          const { data } = await this.update("invoice-items", item.id, {
+            name: item.name,
+            qty: item.qty,
+            price: item.price,
+          });
+          if (data.id) {
+            itemIds.push(data.id);
+          }
+        } else {
+          const { data } = await this.create("invoice-items", {
+            name: item.name,
+            qty: item.qty,
+            price: item.price,
+          });
+          if (data.id) {
+            itemIds.push(data.id);
+          }
+        }
+      }
+      // if (this.deletedIds.length) {
+      //   for (let id of this.deletedIds) {
+      //     await this._delete("invoice-items", id);
+      //   }
+      // }
+      const payload = {
+        description: value.description,
+        due_date: this.$dayjs(value.due_date).toISOString(),
+        payment_term: value.payment_term,
+        sender_city: value.from.city,
+        sender_country: value.from.country,
+        sender_street: value.from.street,
+        sender_zip: value.from.zip,
+        recipient_city: value.to.city,
+        recipient_country: value.to.country,
+        recipient_street: value.to.street,
+        recipient_zip: value.to.zip,
+        recipient_name: value.to.client_name,
+        recipient_email: value.to.email,
+        amount: this.grandTotal,
+        invoice_items: itemIds,
+      };
+
+      console.log("👾 Transformed Payload", payload);
+      await this.update("invoices", this.$route.params.id, payload);
+      console.log("--- Edit Success ---");
+      this.$router.push({ path: "/detail/" + this.$route.params.id });
     },
+  },
+  computed: {
+    grandTotal() {
+      return this.items
+        .map((item) => (+item.qty || 0) * (+item.price || 0))
+        .reduce((prev, current) => prev + current, 0);
+    },
+  },
+  mounted() {
+    console.log("Edit Page 🏞️", this.detail);
+    this.$formkit.get("sender_street")?.input(this.detail.sender_street);
+    this.$formkit.get("sender_city")?.input(this.detail.sender_city);
+    this.$formkit.get("sender_zip")?.input(this.detail.sender_zip);
+    this.$formkit.get("sender_country")?.input(this.detail.sender_country);
+
+    this.$formkit.get("recipient_street")?.input(this.detail.recipient_street);
+    this.$formkit.get("recipient_city")?.input(this.detail.recipient_city);
+    this.$formkit.get("recipient_zip")?.input(this.detail.recipient_zip);
+    this.$formkit
+      .get("recipient_country")
+      ?.input(this.detail.recipient_country);
+    this.$formkit.get("recipient_name")?.input(this.detail.recipient_name);
+    this.$formkit.get("recipient_email")?.input(this.detail.recipient_email);
+
+    const formatted = this.$dayjs(this.detail?.due_date).format("YYYY-MM-DD");
+    this.$formkit.get("due_date")?.input(formatted);
+    this.$formkit.get("description")?.input(this.detail.description);
+    this.$formkit.get("payment_term")?.input(this.detail.payment_term);
+
+    this.items = this.detail.invoice_items.data.map(({ id, attributes }) => ({
+      id,
+      name: attributes.name,
+      qty: attributes.qty,
+      price: attributes.price,
+    }));
   },
 };
 </script>

@@ -16,7 +16,7 @@
         <span class="text-anodyne-500">#</span>{{ detail?.invoice_no }}
       </h1>
       <div class="flex items-center gap-4">
-        <NuxtLink to="/detail/edit">
+        <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
           <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
         </NuxtLink>
         <Button class="hidden md:flex bg-error-200">Delete</Button>
@@ -141,15 +141,15 @@
     </section>
 
     <section class="flex flex-col gap-4 md:hidden">
-      <NuxtLink to="/detail/edit">
-        <Button class="bg-anodyne-500">Edit</Button>
+      <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
+        <Button class="bg-anodyne-500 w-full">Edit</Button>
       </NuxtLink>
       <Button class="bg-error-200">Delete</Button>
     </section>
 
     <template #modal>
       <Modal v-model="atEditPage" @overlayClick="toDetailPage">
-        <NuxtChild />
+        <NuxtChild :detail="detail" />
       </Modal>
     </template>
   </NuxtLayout>
@@ -179,12 +179,14 @@ export default {
   },
   methods: {
     toDetailPage() {
-      this.$router.push({ path: "/detail" });
+      this.$router.push({ path: "/detail/" + this.$route.params.id });
     },
   },
   computed: {
     atEditPage() {
-      return this.$route.fullPath === "/detail/edit";
+      return (
+        this.$route.fullPath === "/detail/" + this.$route.params.id + "/edit"
+      );
     },
   },
   async mounted() {
