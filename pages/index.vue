@@ -7,7 +7,7 @@
       </div>
 
       <div class="flex gap-4 items-center">
-        <div class="relative" :tabindex="0" @blur="dropdownOpen = false">
+        <div class="relative" :tabindex="0" v-click-outside="closeDropdown">
           <Button
             class="bg-transparent hover:bg-anodyne-100/5"
             @click="dropdownOpen = !dropdownOpen"
@@ -133,6 +133,9 @@ export default {
     },
     toIndexPage() {
       this.$router.push({ path: "/" });
+    },
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
   },
   computed: {
