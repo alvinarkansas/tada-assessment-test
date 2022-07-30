@@ -9,7 +9,7 @@
       "
     >
       <p class="font-bold md:min-w-[72px]">
-        <span class="text-anodyne-500">#</span>{{ detail.id }}
+        <span class="text-anodyne-500">#</span>{{ detail.invoice_no }}
       </p>
       <p
         class="
@@ -17,7 +17,7 @@
           dark:text-anodyne-300
           mb-1
           hidden
-          md:block md:flex-2
+          md:block md:min-w-[144px]
         "
       >
         Due {{ detail.due_date }}

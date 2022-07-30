@@ -19,10 +19,25 @@
       </div>
     </section>
 
-    <section class="flex flex-col gap-5">
-      <NuxtLink v-for="invoice in invoices" :key="invoice.id" to="/detail">
+    <section class="flex flex-col gap-5" v-if="invoices.length">
+      <NuxtLink
+        v-for="invoice in invoices"
+        :key="invoice.id"
+        :to="'/detail/' + invoice.id"
+      >
         <InvoiceCard :detail="invoice" />
       </NuxtLink>
+    </section>
+
+    <section v-else class="grid gap-5 place-items-center pt-32">
+      <MailOpenIcon class="h-12 w-12" />
+      <p class="font-bold text-xl">No invoices</p>
+      <p>
+        Currently there is no invoice,
+        <NuxtLink to="/create" class="underline text-shade-200"
+          >create one</NuxtLink
+        >
+      </p>
     </section>
 
     <template #modal>
@@ -37,7 +52,7 @@
 import Button from "@/components/Button.vue";
 import Modal from "@/components/Modal.vue";
 import store from "@/stores";
-import { PlusCircleIcon } from "@heroicons/vue/solid";
+import { PlusCircleIcon, MailOpenIcon } from "@heroicons/vue/solid";
 
 export default {
   name: "IndexPage",
@@ -48,6 +63,7 @@ export default {
   },
   components: {
     Button,
+    MailOpenIcon,
     Modal,
     PlusCircleIcon,
   },
@@ -74,8 +90,10 @@ export default {
       populate: "*",
       sort: "id:desc",
     });
-    this.invoices = data.map(({ attributes }) => ({
-      id: attributes.invoice_no,
+    console.log("🍀", data);
+    this.invoices = data.map(({ attributes, id }) => ({
+      id,
+      invoice_no: attributes.invoice_no,
       name: attributes.recipient_name,
       due_date: this.$dayjs(attributes.due_date).format("DD MMM YYYY"),
       amount: attributes.amount,

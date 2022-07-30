@@ -6,7 +6,7 @@ const textClassification = {
   inner:
     "border-none rounded-md mb-1 overflow-hidden dark:bg-anodyne-600 focus-within:border-blue-500",
   input:
-    "w-full py-4 px-5 dark:bg-anodyne-600 border-none text-base text-anodyne-700 md:text-anodyne-100 placeholder-gray-400",
+    "w-full py-4 px-5 dark:bg-anodyne-600 border-none text-base text-anodyne-700 dark:text-anodyne-100 placeholder-gray-400",
   help: "text-xs text-gray-500",
   messages: "list-none p-0 mt-1 mb-0",
   message: "text-error-200 mb-1 text-sm",

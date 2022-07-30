@@ -13,14 +13,14 @@
 
     <header class="flex items-center justify-between mb-8">
       <h1 class="text-4xl font-bold">
-        <span class="text-anodyne-500">#</span>XM9141
+        <span class="text-anodyne-500">#</span>{{ detail?.invoice_no }}
       </h1>
       <div class="flex items-center gap-4">
         <NuxtLink to="/detail/edit">
           <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
         </NuxtLink>
         <Button class="hidden md:flex bg-error-200">Delete</Button>
-        <Button>Mark as Paid</Button>
+        <Button v-if="detail?.status !== 'paid'">Mark as Paid</Button>
       </div>
     </header>
 
@@ -29,39 +29,45 @@
         <div>
           <p class="mb-2">Project Description</p>
           <p class="font-semibold text-lg leading-6">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi
-            nostrum eveniet quisquam, saepe ratione omnis accusantium vero
-            incidunt.
+            {{ detail?.description }}
           </p>
         </div>
 
         <div class="text-right">
-          <p>19 Union Terrace</p>
-          <p>London</p>
-          <p>EI192</p>
-          <p>United Kingdom</p>
+          <p>{{ detail?.recipient_street }}</p>
+          <p>{{ detail?.recipient_city }}</p>
+          <p>{{ detail?.recipient_zip }}</p>
+          <p>{{ detail?.recipient_country }}</p>
         </div>
       </div>
 
-      <div class="grid md:grid-cols-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4">
         <div>
           <p class="mb-2">Client</p>
-          <p class="font-semibold text-lg leading-6">Alex Grim</p>
+          <p class="font-semibold text-lg leading-6">
+            {{ detail?.recipient_name }}
+          </p>
         </div>
 
         <div>
           <p class="mb-2">Due Date</p>
-          <p class="font-semibold text-lg leading-6">21 Aug 2021</p>
+          <p class="font-semibold text-lg leading-6">
+            {{ $dayjs(detail?.due_date).format("DD MMM YYYY") }}
+          </p>
         </div>
 
         <div>
           <p class="mb-2">Payment Terms</p>
-          <p class="font-semibold text-lg leading-6">Next 30 Days</p>
+          <p class="font-semibold text-lg leading-6">
+            {{ detail?.payment_term }}
+          </p>
         </div>
 
         <div>
           <p class="mb-2">Sent To</p>
-          <p class="font-semibold text-lg leading-6">alexgrim@gmail.com</p>
+          <p class="font-semibold text-lg leading-6">
+            {{ detail?.recipient_email }}
+          </p>
         </div>
       </div>
 
@@ -89,17 +95,27 @@
                 </tr>
               </thead>
               <tbody class="font-semibold">
-                <tr>
-                  <td class="py-4 px-6">Item 1</td>
-                  <td class="py-4 px-6 text-center">20</td>
-                  <td class="py-4 px-6 text-right">{{ $currency(90000) }}</td>
-                  <td class="py-4 px-6 text-right">{{ $currency(1800000) }}</td>
-                </tr>
-                <tr>
-                  <td class="py-4 px-6">Item 2</td>
-                  <td class="py-4 px-6 text-center">5</td>
-                  <td class="py-4 px-6 text-right">{{ $currency(10000) }}</td>
-                  <td class="py-4 px-6 text-right">{{ $currency(500000) }}</td>
+                <template v-if="detail?.invoice_items?.data.length">
+                  <tr
+                    v-for="item in detail?.invoice_items?.data"
+                    :key="item.id"
+                  >
+                    <td class="py-4 px-6">{{ item.attributes.name }}</td>
+                    <td class="py-4 px-6 text-center">
+                      {{ item.attributes.qty }}
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                      {{ $currency(item.attributes.price) }}
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                      {{
+                        $currency(item.attributes.qty * item.attributes.price)
+                      }}
+                    </td>
+                  </tr>
+                </template>
+                <tr v-else>
+                  <td class="py-4 px-6">No items</td>
                 </tr>
               </tbody>
             </table>
@@ -118,7 +134,7 @@
             "
           >
             <p>Total</p>
-            <p>{{ $currency(269900) }}</p>
+            <p>{{ $currency(detail?.amount) }}</p>
           </div>
         </div>
       </div>
@@ -148,6 +164,13 @@ export default {
   name: "DetailPage",
   setup() {
     definePageMeta({ layout: false });
+    const { findOne } = useStrapi4();
+    return { findOne };
+  },
+  data() {
+    return {
+      detail: {},
+    };
   },
   components: {
     Button,
@@ -159,13 +182,18 @@ export default {
       this.$router.push({ path: "/detail" });
     },
   },
-  mounted() {
-    console.log("Detail Page");
-  },
   computed: {
     atEditPage() {
       return this.$route.fullPath === "/detail/edit";
     },
+  },
+  async mounted() {
+    const { data } = await this.findOne("invoices", this.$route.params.id, {
+      populate: "*",
+      sort: "id:desc",
+    });
+    this.detail = data.attributes;
+    console.log("Detail Page", data);
   },
 };
 </script>
