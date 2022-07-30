@@ -19,7 +19,9 @@
         <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
           <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
         </NuxtLink>
-        <Button class="hidden md:flex bg-error-200">Delete</Button>
+        <Button @click="deleteInvoice" class="hidden md:flex bg-error-200"
+          >Delete</Button
+        >
         <Button v-if="detail?.status !== 'paid'">Mark as Paid</Button>
       </div>
     </header>
@@ -144,7 +146,7 @@
       <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
         <Button class="bg-anodyne-500 w-full">Edit</Button>
       </NuxtLink>
-      <Button class="bg-error-200">Delete</Button>
+      <Button @click="deleteInvoice" class="bg-error-200">Delete</Button>
     </section>
 
     <template #modal>
@@ -164,8 +166,8 @@ export default {
   name: "DetailPage",
   setup() {
     definePageMeta({ layout: false });
-    const { findOne } = useStrapi4();
-    return { findOne };
+    const { findOne, delete: _delete } = useStrapi4();
+    return { findOne, _delete };
   },
   data() {
     return {
@@ -180,6 +182,10 @@ export default {
   methods: {
     toDetailPage() {
       this.$router.push({ path: "/detail/" + this.$route.params.id });
+    },
+    async deleteInvoice() {
+      await this._delete("invoices", this.$route.params.id);
+      this.$router.push({ path: "/" });
     },
   },
   computed: {
