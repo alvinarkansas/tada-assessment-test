@@ -6,7 +6,7 @@
       text-success-100 text-lg
       py-2
       px-4
-      flex
+      inline-flex
       justify-center
       items-center
       gap-2

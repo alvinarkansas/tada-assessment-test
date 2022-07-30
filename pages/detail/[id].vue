@@ -19,15 +19,17 @@
         <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
           <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
         </NuxtLink>
-        <Button @click="deleteInvoice" class="hidden md:flex bg-error-200"
-          >Delete</Button
-        >
-        <Button v-if="detail?.status !== 'paid'">Mark as Paid</Button>
+        <Button @click="deleteInvoice" class="hidden md:flex bg-error-200">
+          Delete
+        </Button>
+        <Button @click="markAsPaid" v-if="detail?.status !== 'paid'">
+          Mark as Paid
+        </Button>
       </div>
     </header>
 
     <section class="flex flex-col gap-8 mb-8">
-      <div class="grid grid-cols-2">
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-y-8 grid-flow-dense">
         <div>
           <p class="mb-2">Project Description</p>
           <p class="font-semibold text-lg leading-6">
@@ -35,7 +37,15 @@
           </p>
         </div>
 
-        <div class="text-right">
+        <div>
+          <p class="mb-2">Payment Status</p>
+          <Badge :variant="detail?.status" class="capitalize">
+            {{ detail?.status }}
+          </Badge>
+        </div>
+
+        <div class="font-semibold md:font-normal md:text-right">
+          <p class="mb-2 font-normal md:hidden">Bill Address</p>
           <p>{{ detail?.recipient_street }}</p>
           <p>{{ detail?.recipient_city }}</p>
           <p>{{ detail?.recipient_zip }}</p>
@@ -166,8 +176,8 @@ export default {
   name: "DetailPage",
   setup() {
     definePageMeta({ layout: false });
-    const { findOne, delete: _delete } = useStrapi4();
-    return { findOne, _delete };
+    const { findOne, delete: _delete, update } = useStrapi4();
+    return { findOne, _delete, update };
   },
   data() {
     return {
@@ -180,12 +190,24 @@ export default {
     Modal,
   },
   methods: {
+    async loadInvoiceDetail() {
+      const { data } = await this.findOne("invoices", this.$route.params.id, {
+        populate: "*",
+      });
+      this.detail = data.attributes;
+    },
     toDetailPage() {
       this.$router.push({ path: "/detail/" + this.$route.params.id });
     },
     async deleteInvoice() {
       await this._delete("invoices", this.$route.params.id);
       this.$router.push({ path: "/" });
+    },
+    async markAsPaid() {
+      await this.update("invoices", this.$route.params.id, {
+        status: "paid",
+      });
+      this.loadInvoiceDetail();
     },
   },
   computed: {
@@ -195,13 +217,8 @@ export default {
       );
     },
   },
-  async mounted() {
-    const { data } = await this.findOne("invoices", this.$route.params.id, {
-      populate: "*",
-      sort: "id:desc",
-    });
-    this.detail = data.attributes;
-    console.log("Detail Page", data);
+  mounted() {
+    this.loadInvoiceDetail();
   },
 };
 </script>
