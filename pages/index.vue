@@ -7,7 +7,40 @@
       </div>
 
       <div class="flex gap-4 items-center">
-        <p>Filter</p>
+        <div class="relative" :tabindex="0" @blur="dropdownOpen = false">
+          <Button
+            class="bg-transparent hover:bg-anodyne-100/5"
+            @click="dropdownOpen = !dropdownOpen"
+          >
+            <div class="inline-flex gap-2 items-center">
+              <p class="font-semibold">
+                {{ screenWidth < 768 ? "Filter" : "Filter by status" }}
+              </p>
+              <ChevronDownIcon class="w-5 h-5 text-anodyne-500" />
+            </div>
+          </Button>
+          <div
+            v-if="dropdownOpen"
+            class="
+              absolute
+              top-16
+              inset-x-0
+              bg-anodyne-300
+              dark:bg-anodyne-600
+              rounded-lg
+              shadow-lg
+              flex flex-col
+              gap-4
+              p-4
+            "
+          >
+            <button @click="filter = ''">All Status</button>
+            <button @click="filter = 'paid'">Paid</button>
+            <button @click="filter = 'pending'">Pending</button>
+            <button @click="filter = 'draft'">Draft</button>
+          </div>
+        </div>
+
         <NuxtLink to="/create">
           <Button>
             <template #icon>
@@ -33,10 +66,10 @@
       <MailOpenIcon class="h-12 w-12" />
       <p class="font-bold text-xl">No invoices</p>
       <p>
-        Currently there is no invoice,
-        <NuxtLink to="/create" class="underline text-shade-200"
-          >create one</NuxtLink
-        >
+        Currently there is no {{ filter }} invoice,
+        <NuxtLink to="/create" class="underline text-shade-200">
+          create one
+        </NuxtLink>
       </p>
     </section>
 
@@ -52,7 +85,11 @@
 import Button from "@/components/Button.vue";
 import Modal from "@/components/Modal.vue";
 import store from "@/stores";
-import { PlusCircleIcon, MailOpenIcon } from "@heroicons/vue/solid";
+import {
+  ChevronDownIcon,
+  PlusCircleIcon,
+  MailOpenIcon,
+} from "@heroicons/vue/solid";
 
 export default {
   name: "IndexPage",
@@ -63,6 +100,7 @@ export default {
   },
   components: {
     Button,
+    ChevronDownIcon,
     MailOpenIcon,
     Modal,
     PlusCircleIcon,
@@ -70,9 +108,29 @@ export default {
   data() {
     return {
       invoices: [],
+      dropdownOpen: false,
+      filter: "",
     };
   },
   methods: {
+    async loadInvoices() {
+      const params = {
+        populate: "*",
+        sort: "id:desc",
+      };
+      if (this.filter) {
+        params["filters[status][$eq]"] = this.filter;
+      }
+      const { data } = await this.find("invoices", params);
+      this.invoices = data.map(({ attributes, id }) => ({
+        id,
+        invoice_no: attributes.invoice_no,
+        name: attributes.recipient_name,
+        due_date: this.$dayjs(attributes.due_date).format("DD MMM YYYY"),
+        amount: attributes.amount,
+        status: attributes.status,
+      }));
+    },
     toIndexPage() {
       this.$router.push({ path: "/" });
     },
@@ -85,20 +143,14 @@ export default {
       return this.$route.fullPath === "/create";
     },
   },
+  watch: {
+    filter() {
+      this.loadInvoices();
+      this.dropdownOpen = false;
+    },
+  },
   async mounted() {
-    const { data } = await this.find("invoices", {
-      populate: "*",
-      sort: "id:desc",
-    });
-    console.log("🍀", data);
-    this.invoices = data.map(({ attributes, id }) => ({
-      id,
-      invoice_no: attributes.invoice_no,
-      name: attributes.recipient_name,
-      due_date: this.$dayjs(attributes.due_date).format("DD MMM YYYY"),
-      amount: attributes.amount,
-      status: attributes.status,
-    }));
+    this.loadInvoices();
   },
 };
 </script>
