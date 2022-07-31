@@ -125,13 +125,13 @@
 
       <section class="mb-8">
         <p class="text-xl font-semibold text-anodyne-400 mb-4">Item List</p>
-        <FormKit name="items" v-model="items" type="list">
+        <FormKit name="items" v-model="values" type="list">
           <div class="hidden md:flex gap-5 mb-3">
             <p class="flex-[3]">Item Name</p>
             <p class="flex-[1]">Qty</p>
             <p class="flex-[2]">Price</p>
             <p class="flex-[1]">Total</p>
-            <div class="flex-[1]" />
+            <div class="flex-[1]" v-if="values.length > 1" />
           </div>
           <FormKit v-for="(item, i) in items" :key="i" name="item" type="group">
             <FormKit
@@ -166,19 +166,21 @@
               />
               <p
                 class="mb-3 font-semibold flex-[1]"
-                v-if="item.qty && item.price"
+                v-if="values[i].qty && values[i].price"
               >
-                {{ item.qty * item.price }}
+                <!-- {{ item.qty * item.price }} -->
+                {{ values[i].qty * values[i].price }}
               </p>
               <p class="mb-3 font-semibold flex-[1]" v-else>0</p>
               <TrashIcon
+                v-if="values.length > 1"
                 @click="removeItem(i)"
                 class="w-6 h-6 text-anodyne-500 flex-[1] mb-3 cursor-pointer"
               />
             </div>
           </FormKit>
         </FormKit>
-        <Button class="bg-anodyne-600 w-full" @click="items.push({})">
+        <Button class="bg-anodyne-600 w-full" @click="addItem">
           +Add New
         </Button>
       </section>
@@ -187,9 +189,9 @@
         <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
           Cancel
         </Button>
-        <Button @click="saveAsDraft" class="bg-anodyne-600"
-          >Save As Draft</Button
-        >
+        <Button @click="saveAsDraft" class="bg-anodyne-600">
+          Save As Draft
+        </Button>
         <Button type="submit">Create Invoice</Button>
       </section>
     </FormKit>
@@ -210,21 +212,32 @@ export default {
   setup() {
     useHead({ title: "Create" });
     const { create } = useStrapi4();
-    return { create };
+
+    const values = ref([]);
+    const items = ref([{ name: "", qty: 0, price: 0 }]);
+
+    const addItem = () => {
+      items.value.push({ name: "", qty: 0, price: 0 });
+    };
+
+    const removeItem = (key) => {
+      items.value = items.value.filter((item, index) => index !== key);
+    };
+
+    const grandTotal = computed(() => {
+      return values.value
+        .map((item) => (item.qty || 0) * (item.price || 0))
+        .reduce((prev, current) => prev + current, 0);
+    });
+
+    return { create, values, items, addItem, removeItem, grandTotal };
   },
   data() {
     return {
-      items: [{}],
       draft: false,
     };
   },
   methods: {
-    removeItem(index) {
-      const filtered = [...this.items].filter((item, idx) => {
-        return idx !== index;
-      });
-      this.items = filtered;
-    },
     generateInvoiceNumber() {
       let result = "";
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -240,11 +253,11 @@ export default {
     },
     async onSubmit(value) {
       let itemIds = [];
-      for (let item of this.items) {
+      for (let item of this.values) {
         const { data } = await this.create("invoice-items", {
           name: item.name,
-          qty: item.qty,
-          price: item.price,
+          qty: +item.qty,
+          price: +item.price,
         });
         if (data.id) {
           itemIds.push(data.id);
@@ -281,13 +294,6 @@ export default {
       setTimeout(() => {
         this.$formkit.submit("invoice");
       }, 100);
-    },
-  },
-  computed: {
-    grandTotal() {
-      return this.items
-        .map((item) => (item.qty || 0) * (item.price || 0))
-        .reduce((prev, current) => prev + current, 0);
     },
   },
 };
