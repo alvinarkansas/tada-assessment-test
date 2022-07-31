@@ -106,6 +106,11 @@ import {
 export default {
   name: "IndexPage",
   async setup() {
+    useHead({
+      titleTemplate: (title) => {
+        return title ? `${title} - Innnvoice` : "Innnvoice";
+      },
+    });
     definePageMeta({ layout: false });
     const { find } = useStrapi4();
     return { find };

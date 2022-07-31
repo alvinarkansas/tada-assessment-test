@@ -175,6 +175,7 @@ import Modal from "@/components/Modal.vue";
 export default {
   name: "DetailPage",
   setup() {
+    useHead({ title: "Detail" });
     definePageMeta({ layout: false });
     const { findOne, delete: _delete, update } = useStrapi4();
     return { findOne, _delete, update };

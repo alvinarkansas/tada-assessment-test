@@ -221,6 +221,7 @@ export default {
   },
   props: ["detail"],
   setup() {
+    useHead({ title: "Edit" });
     const { update, create, delete: _delete } = useStrapi4();
     return { update, create, _delete };
   },

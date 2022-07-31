@@ -208,6 +208,7 @@ export default {
     TrashIcon,
   },
   setup() {
+    useHead({ title: "Create" });
     const { create } = useStrapi4();
     return { create };
   },
