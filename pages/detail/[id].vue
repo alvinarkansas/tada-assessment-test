@@ -16,7 +16,7 @@
         <span class="text-anodyne-500">#</span>{{ detail?.invoice_no }}
       </h1>
       <div class="flex items-center gap-4">
-        <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
+        <NuxtLink :to="'/detail/' + $route.params.id + '/edit'">
           <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
         </NuxtLink>
         <Button @click="deleteInvoice" class="hidden md:flex bg-error-200">
@@ -153,7 +153,7 @@
     </section>
 
     <section class="flex flex-col gap-4 md:hidden">
-      <NuxtLink :to="'/detail/' + this.$route.params.id + '/edit'">
+      <NuxtLink :to="'/detail/' + $route.params.id + '/edit'">
         <Button class="bg-anodyne-500 w-full">Edit</Button>
       </NuxtLink>
       <Button @click="deleteInvoice" class="bg-error-200">Delete</Button>

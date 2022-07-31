@@ -133,7 +133,12 @@
             <p class="flex-[1]">Total</p>
             <div class="flex-[1]" v-if="values.length > 1" />
           </div>
-          <FormKit v-for="(item, i) in items" :key="i" name="item" type="group">
+          <FormKit
+            v-for="(item, i) in items"
+            :key="item.token"
+            name="item"
+            type="group"
+          >
             <FormKit
               name="name"
               label="Item Name"
@@ -168,7 +173,6 @@
                 class="mb-3 font-semibold flex-[1]"
                 v-if="values[i].qty && values[i].price"
               >
-                <!-- {{ item.qty * item.price }} -->
                 {{ values[i].qty * values[i].price }}
               </p>
               <p class="mb-3 font-semibold flex-[1]" v-else>0</p>
@@ -200,6 +204,7 @@
 
 <script>
 import store from "@/stores";
+import { token } from "@formkit/utils";
 import { TrashIcon } from "@heroicons/vue/solid";
 import Button from "@/components/Button.vue";
 
@@ -214,14 +219,14 @@ export default {
     const { create } = useStrapi4();
 
     const values = ref([]);
-    const items = ref([{ name: "", qty: 0, price: 0 }]);
+    const items = ref([{ token: token(), name: "", qty: 0, price: 0 }]);
 
     const addItem = () => {
-      items.value.push({ name: "", qty: 0, price: 0 });
+      items.value.push({ token: token(), name: "", qty: 0, price: 0 });
     };
 
     const removeItem = (key) => {
-      items.value = items.value.filter((item, index) => index !== key);
+      items.value = items.value.filter((_, index) => index !== key);
     };
 
     const grandTotal = computed(() => {

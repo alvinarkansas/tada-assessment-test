@@ -138,7 +138,7 @@
 
       <section class="mb-8">
         <p class="text-xl font-semibold text-anodyne-400 mb-4">Item List</p>
-        <FormKit name="items" v-model="items" type="list">
+        <FormKit name="items" v-model="values" type="list">
           <div class="hidden md:flex gap-5 mb-3">
             <p class="flex-[3]">Item Name</p>
             <p class="flex-[1]">Qty</p>
@@ -146,7 +146,12 @@
             <p class="flex-[1]">Total</p>
             <div class="flex-[1]" />
           </div>
-          <FormKit v-for="(item, i) in items" :key="i" name="item" type="group">
+          <FormKit
+            v-for="(item, i) in items"
+            :key="item.token"
+            name="item"
+            type="group"
+          >
             <FormKit
               name="name"
               label="Item Name"
@@ -179,9 +184,9 @@
               />
               <p
                 class="mb-3 font-semibold flex-[1]"
-                v-if="item.qty && item.price"
+                v-if="values[i].qty && values[i].price"
               >
-                {{ item.qty * item.price }}
+                {{ values[i].qty * values[i].price }}
               </p>
               <p class="mb-3 font-semibold flex-[1]" v-else>0</p>
               <TrashIcon
@@ -191,7 +196,7 @@
             </div>
           </FormKit>
         </FormKit>
-        <Button class="bg-anodyne-600 w-full" @click="items.push({})">
+        <Button class="bg-anodyne-600 w-full" @click="addItem">
           +Add New
         </Button>
       </section>
@@ -203,7 +208,7 @@
         >
           Cancel
         </Button>
-        <Button type="submit"> Save Changes </Button>
+        <Button type="submit">Save Changes</Button>
       </section>
     </FormKit>
   </div>
@@ -211,6 +216,7 @@
 
 <script>
 import { TrashIcon } from "@heroicons/vue/solid";
+import { token } from "@formkit/utils";
 import Button from "@/components/Button.vue";
 
 export default {
@@ -220,28 +226,55 @@ export default {
     TrashIcon,
   },
   props: ["detail"],
-  setup() {
+  setup(props) {
     useHead({ title: "Edit" });
     const { update, create, delete: _delete } = useStrapi4();
-    return { update, create, _delete };
-  },
-  data() {
+
+    const mapped = props.detail.invoice_items.data.map(
+      ({ id, attributes }) => ({
+        id,
+        name: attributes.name,
+        qty: attributes.qty,
+        price: attributes.price,
+        token: token(),
+      })
+    );
+
+    const values = ref(mapped);
+    const items = ref(mapped);
+
+    const deletedIds = ref([]);
+
+    const addItem = () => {
+      items.value.push({ token: token(), name: "", qty: 0, price: 0 });
+    };
+
+    const removeItem = (key) => {
+      items.value = items.value.filter((_, index) => index !== key);
+    };
+
+    const grandTotal = computed(() => {
+      return values.value
+        .map((item) => (item.qty || 0) * (item.price || 0))
+        .reduce((prev, current) => prev + current, 0);
+    });
+
     return {
-      items: [{}],
-      deletedIds: [],
+      update,
+      create,
+      _delete,
+      values,
+      items,
+      addItem,
+      removeItem,
+      grandTotal,
+      deletedIds,
     };
   },
   methods: {
-    removeItem(index) {
-      const filtered = [...this.items].filter((item, idx) => {
-        return idx !== index;
-      });
-      this.items = filtered;
-    },
     async onSubmit(value) {
-      console.log("Submit", value);
       let itemIds = [];
-      for (let item of this.items) {
+      for (let item of this.values) {
         if (item.id) {
           const { data } = await this.update("invoice-items", item.id, {
             name: item.name,
@@ -262,11 +295,11 @@ export default {
           }
         }
       }
-      // if (this.deletedIds.length) {
-      //   for (let id of this.deletedIds) {
-      //     await this._delete("invoice-items", id);
-      //   }
-      // }
+      if (this.deletedIds.length) {
+        for (let id of this.deletedIds) {
+          await this._delete("invoice-items", id);
+        }
+      }
       const payload = {
         description: value.description,
         due_date: this.$dayjs(value.due_date).toISOString(),
@@ -285,18 +318,9 @@ export default {
         invoice_items: itemIds,
       };
 
-      console.log("👾 Transformed Payload", payload);
       await this.update("invoices", this.$route.params.id, payload);
-      console.log("--- Edit Success ---");
       this.$emit("refetch");
       this.$router.push({ path: "/detail/" + this.$route.params.id });
-    },
-  },
-  computed: {
-    grandTotal() {
-      return this.items
-        .map((item) => (+item.qty || 0) * (+item.price || 0))
-        .reduce((prev, current) => prev + current, 0);
     },
   },
   mounted() {
@@ -318,13 +342,6 @@ export default {
     this.$formkit.get("due_date")?.input(formatted);
     this.$formkit.get("description")?.input(this.detail.description);
     this.$formkit.get("payment_term")?.input(this.detail.payment_term);
-
-    this.items = this.detail.invoice_items.data.map(({ id, attributes }) => ({
-      id,
-      name: attributes.name,
-      qty: attributes.qty,
-      price: attributes.price,
-    }));
   },
 };
 </script>
