@@ -146,7 +146,7 @@
               placeholder="Type item name here"
               outer-class="md:hidden mb-3"
             />
-            <div class="flex gap-5 items-center">
+            <div class="flex gap-5 items-baseline">
               <FormKit
                 name="name"
                 type="text"
@@ -160,6 +160,7 @@
                 placeholder="Type qty here"
                 outer-class="flex-[1] mb-3"
                 label-class="md:hidden"
+                validation="min:0"
               />
               <FormKit
                 name="price"
@@ -168,6 +169,7 @@
                 placeholder="Type price here"
                 outer-class="flex-[2] mb-3"
                 label-class="md:hidden"
+                validation="min:0"
               />
               <p
                 class="mb-3 font-semibold flex-[1]"
@@ -189,7 +191,7 @@
         </Button>
       </section>
 
-      <section class="flex gap-5 justify-end">
+      <section class="flex flex-col-reverse md:flex-row gap-5 justify-end">
         <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
           Cancel
         </Button>

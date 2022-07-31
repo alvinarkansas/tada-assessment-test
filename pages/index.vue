@@ -3,10 +3,16 @@
     <section class="flex justify-between mb-8">
       <div>
         <h1 class="font-bold text-4xl">Invoices</h1>
-        <p>There are {{ invoices.length }} total invoices</p>
+        <p>
+          {{
+            screenWidth < 768
+              ? `${invoices.length} invoices`
+              : `There are ${invoices.length} total invoices`
+          }}
+        </p>
       </div>
 
-      <div class="flex gap-4 items-center">
+      <div class="flex md:gap-4 items-center">
         <div class="relative" :tabindex="0" v-click-outside="closeDropdown">
           <Button
             class="bg-transparent hover:bg-anodyne-100/5"
