@@ -13,51 +13,39 @@
             @click="dropdownOpen = !dropdownOpen"
           >
             <div class="inline-flex gap-2 items-center">
-              <p class="font-semibold">
+              <p class="font-semibold !text-anodyne-800 dark:!text-anodyne-100">
                 {{ screenWidth < 768 ? "Filter" : "Filter by status" }}
               </p>
               <ChevronDownIcon class="w-5 h-5 text-anodyne-500" />
             </div>
           </Button>
-          <div
-            v-if="dropdownOpen"
-            class="
-              absolute
-              top-16
-              inset-x-0
-              bg-anodyne-300
-              dark:bg-anodyne-600
-              rounded-lg
-              shadow-lg
-              flex flex-col
-              gap-2
-              p-2
-            "
-          >
+          <div v-if="dropdownOpen" class="dropdown">
             <button
-              class="p-2 hover:bg-anodyne-700 rounded-md"
-              :class="{ 'bg-anodyne-700': filter === '' }"
+              :class="{ 'bg-anodyne-200 dark:bg-anodyne-700': filter === '' }"
               @click="filter = ''"
             >
               All Status
             </button>
             <button
-              class="p-2 hover:bg-anodyne-700 rounded-md"
-              :class="{ 'bg-anodyne-700': filter === 'paid' }"
+              :class="{
+                'bg-anodyne-200 dark:bg-anodyne-700': filter === 'paid',
+              }"
               @click="filter = 'paid'"
             >
               Paid
             </button>
             <button
-              class="p-2 hover:bg-anodyne-700 rounded-md"
-              :class="{ 'bg-anodyne-700': filter === 'pending' }"
+              :class="{
+                'bg-anodyne-200 dark:bg-anodyne-700': filter === 'pending',
+              }"
               @click="filter = 'pending'"
             >
               Pending
             </button>
             <button
-              class="p-2 hover:bg-anodyne-700 rounded-md"
-              :class="{ 'bg-anodyne-700': filter === 'draft' }"
+              :class="{
+                'bg-anodyne-200 dark:bg-anodyne-700': filter === 'draft',
+              }"
               @click="filter = 'draft'"
             >
               Draft
@@ -165,3 +153,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.dropdown {
+  @apply absolute top-16 inset-x-0;
+  @apply bg-anodyne-300 dark:bg-anodyne-600;
+  @apply flex flex-col gap-2;
+  @apply p-2;
+  @apply shadow-lg;
+}
+.dropdown button {
+  @apply hover:bg-anodyne-200 dark:hover:bg-anodyne-700;
+  @apply rounded-md;
+  @apply p-2;
+}
+</style>

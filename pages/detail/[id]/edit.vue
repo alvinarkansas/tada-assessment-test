@@ -1,12 +1,7 @@
 <template>
   <div class="inner-modal-fixed overflow-auto">
     <h1 class="text-2xl font-bold mb-8">Edit #{{ detail?.invoice_no }}</h1>
-    <FormKit
-      type="form"
-      @submit="onSubmit"
-      :actions="false"
-      :value="formDetail"
-    >
+    <FormKit type="form" @submit="onSubmit" :actions="false">
       <section class="mb-5">
         <FormKit type="group" name="from">
           <p class="text-base text-shade-100 mb-4">Bill From</p>
@@ -202,7 +197,10 @@
       </section>
 
       <section class="flex gap-5 justify-end">
-        <Button class="bg-anodyne-600" @click="$router.push({ path: '/detail/' + $route.params.id })">
+        <Button
+          class="bg-anodyne-600"
+          @click="$router.push({ path: '/detail/' + $route.params.id })"
+        >
           Cancel
         </Button>
         <Button type="submit"> Save Changes </Button>
@@ -289,6 +287,7 @@ export default {
       console.log("👾 Transformed Payload", payload);
       await this.update("invoices", this.$route.params.id, payload);
       console.log("--- Edit Success ---");
+      this.$emit("refetch");
       this.$router.push({ path: "/detail/" + this.$route.params.id });
     },
   },

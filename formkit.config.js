@@ -21,7 +21,8 @@ export default {
       number: textClassification,
       select: {
         ...textClassification,
-        inner: textClassification.inner + " pr-6",
+        inner: textClassification.inner + " pr-6 bg-anodyne-100",
+        input: textClassification.input + " my-[4.5px] bg-anodyne-100",
       },
     }),
   },

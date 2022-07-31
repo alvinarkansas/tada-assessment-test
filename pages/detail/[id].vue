@@ -161,7 +161,7 @@
 
     <template #modal>
       <Modal v-model="atEditPage" @overlayClick="toDetailPage">
-        <NuxtChild :detail="detail" />
+        <NuxtChild :detail="detail" @refetch="loadInvoiceDetail" />
       </Modal>
     </template>
   </NuxtLayout>
