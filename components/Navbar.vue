@@ -57,13 +57,31 @@
     >
       <SunIcon
         @click="toggleTheme"
-        v-if="$colorMode.preference === 'dark'"
-        class="h-6 md:h-10 w-6 md:w-10 text-anodyne-500 cursor-pointer"
+        v-if="mode === 'dark'"
+        class="
+          h-6
+          md:h-10
+          w-6
+          md:w-10
+          text-anodyne-500
+          cursor-pointer
+          hover:text-shade-100
+          md:transition-transform md:hover:rotate-12
+        "
       />
       <MoonIcon
         @click="toggleTheme"
         v-else
-        class="h-6 md:h-10 w-6 md:w-10 text-anodyne-500 cursor-pointer"
+        class="
+          h-6
+          md:h-10
+          w-6
+          md:w-10
+          text-anodyne-500
+          cursor-pointer
+          hover:text-shade-100
+          md:transition-transform md:hover:rotate-12
+        "
       />
       <div class="py-4 md:py-3 px-6 md:px-4 h-full grid place-items-center">
         <Avatar
@@ -78,11 +96,7 @@
 import { MoonIcon, SunIcon } from "@heroicons/vue/solid";
 
 export default {
-  data() {
-    return {
-      darkTheme: true,
-    };
-  },
+  name: "Navbar",
   components: {
     MoonIcon,
     SunIcon,
@@ -92,6 +106,15 @@ export default {
       this.$colorMode.preference =
         this.$colorMode.preference === "light" ? "dark" : "light";
     },
+  },
+  computed: {
+    mode() {
+      return this.$colorMode.preference;
+    },
+  },
+  mounted() {
+    console.log("COLOR", this.$colorMode.preference);
+    console.log("MODE", this.mode);
   },
 };
 </script>
