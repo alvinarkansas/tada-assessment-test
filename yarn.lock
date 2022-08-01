@@ -2277,7 +2277,7 @@
 
 "heroicons@git+https://github.com/tailwindlabs/heroicons.git#master":
   "integrity" "sha512-s4dGw8+VsRAYpb35Eo8y7q+XuQ7qMUZbl8KKGscmKGAoIlSeE9oF+xbIT8wngOo8gNB+I5QnSxSvj3ZttwBVtA=="
-  "resolved" "git+ssh://git@github.com/tailwindlabs/heroicons.git#db29d11448c947c42822aca42026a9f14806530d"
+  "resolved" "https://github.com/tailwindlabs/heroicons.git#db29d11448c947c42822aca42026a9f14806530d"
   "version" "1.0.6"
 
 "hookable@^5.1.1":
