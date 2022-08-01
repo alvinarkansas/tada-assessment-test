@@ -1,10 +1,10 @@
-# Nuxt 3 Minimal Starter
+# Innnvoice
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+A simple CRUD invoicing application built with Nuxt 3 and Strapi
 
-## Setup
+## 🖥️ Setup
 
-Make sure to install the dependencies:
+After cloning this repository, make sure to install the dependencies:
 
 ```bash
 # yarn
@@ -17,7 +17,7 @@ npm install
 pnpm install --shamefully-hoist
 ```
 
-## Development Server
+## 🚀 Development Server
 
 Start the development server on http://localhost:3000
 
@@ -25,24 +25,26 @@ Start the development server on http://localhost:3000
 npm run dev
 ```
 
-## Production
+## ✏️ Notes
 
-Build the application for production:
+Some notes for reviewer & myself,
 
-```bash
-npm run build
-```
+## 👾 Stack
 
-Locally preview production build:
+These are the stacks that is used for this project
 
-```bash
-npm run preview
-```
+- Nuxt 3
+- Strapi
+- Tailwind
+- Formkit
+- Pinia
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+### Font Selection
 
-## Font Selection
+Based on the glimpse of the UI design, the font families that close enough to the word match are
 
 - Alata
 - Outfit
 - League Spartan
+
+Alata's style for the number "1" has no bent tip. Outfit's number "1" style in the other hand shows too right-agled tip. After that reason --and other considerations, League Spartan was chosen.

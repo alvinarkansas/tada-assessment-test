@@ -23,6 +23,9 @@ export default defineNuxtConfig({
     "@nuxtjs/strapi",
     "@nuxtjs/dayjs",
   ],
+  strapi: {
+    url: "https://salty-garden-80783.herokuapp.com",
+  },
   colorMode: {
     classSuffix: "",
   },
