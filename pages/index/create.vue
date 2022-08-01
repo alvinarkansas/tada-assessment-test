@@ -192,13 +192,29 @@
       </section>
 
       <section class="flex flex-col-reverse md:flex-row gap-5 justify-end">
-        <Button class="bg-anodyne-600" @click="$router.push({ path: '/' })">
+        <Button
+          :disabled="loading"
+          class="bg-anodyne-600"
+          @click="$router.push({ path: '/' })"
+        >
           Cancel
         </Button>
-        <Button @click="saveAsDraft" class="bg-anodyne-600">
+        <Button
+          :disabled="loading"
+          loadingLabel="Saving..."
+          @click="saveAsDraft"
+          class="bg-anodyne-600"
+        >
           Save As Draft
         </Button>
-        <Button type="submit">Create Invoice</Button>
+        <Button
+          :disabled="loading"
+          :loading="loading"
+          loadingLabel="Creating..."
+          type="submit"
+        >
+          Create Invoice
+        </Button>
       </section>
     </FormKit>
   </div>
@@ -242,6 +258,7 @@ export default {
   data() {
     return {
       draft: false,
+      loading: false,
     };
   },
   methods: {
@@ -259,6 +276,7 @@ export default {
       return result;
     },
     async onSubmit(value) {
+      this.loading = true;
       let itemIds = [];
       for (let item of this.values) {
         const { data } = await this.create("invoice-items", {
@@ -291,6 +309,7 @@ export default {
       };
 
       await this.create("invoices", payload);
+      this.loading = false;
 
       store.computed.loadInvoices({});
 

@@ -112,9 +112,5 @@ export default {
       return this.$colorMode.preference;
     },
   },
-  mounted() {
-    console.log("COLOR", this.$colorMode.preference);
-    console.log("MODE", this.mode);
-  },
 };
 </script>

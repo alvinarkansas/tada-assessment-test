@@ -3,13 +3,24 @@
     <section class="flex justify-between mb-8">
       <div>
         <h1 class="font-bold text-4xl">Invoices</h1>
-        <p>
+        <p v-if="!invoicesLoading">
           {{
             screenWidth < 768
               ? `${invoices.length} invoices`
               : `There are ${invoices.length} total invoices`
           }}
         </p>
+        <div
+          v-else
+          class="
+            h-5
+            w-28
+            rounded-md
+            bg-anodyne-300
+            dark:bg-anodyne-500
+            animate-pulse
+          "
+        />
       </div>
 
       <div class="flex md:gap-4 items-center">
@@ -70,26 +81,43 @@
       </div>
     </section>
 
-    <section class="flex flex-col gap-5" v-if="invoices.length">
-      <NuxtLink
-        v-for="invoice in invoices"
-        :key="invoice.id"
-        :to="'/detail/' + invoice.id"
-      >
-        <InvoiceCard :detail="invoice" />
-      </NuxtLink>
+    <section class="flex flex-col gap-5" v-if="invoicesLoading">
+      <div
+        v-for="i in 5"
+        :key="i"
+        class="
+          h-28
+          w-full
+          rounded-lg
+          bg-anodyne-300
+          dark:bg-anodyne-500
+          animate-pulse
+        "
+      />
     </section>
 
-    <section v-else class="grid gap-5 place-items-center pt-32">
-      <MailOpenIcon class="h-12 w-12" />
-      <p class="font-bold text-xl">No invoices</p>
-      <p>
-        Currently there is no {{ filter }} invoice,
-        <NuxtLink to="/create" class="underline text-shade-200">
-          create one
+    <template v-else>
+      <section class="flex flex-col gap-5" v-if="invoices.length">
+        <NuxtLink
+          v-for="invoice in invoices"
+          :key="invoice.id"
+          :to="'/detail/' + invoice.id"
+        >
+          <InvoiceCard :detail="invoice" />
         </NuxtLink>
-      </p>
-    </section>
+      </section>
+
+      <section v-else class="grid gap-5 place-items-center pt-32">
+        <MailOpenIcon class="h-12 w-12" />
+        <p class="font-bold text-xl">No invoices</p>
+        <p>
+          Currently there is no {{ filter }} invoice,
+          <NuxtLink to="/create" class="underline text-shade-200">
+            create one
+          </NuxtLink>
+        </p>
+      </section>
+    </template>
 
     <template #modal>
       <Modal v-model="atCreatePage" @overlayClick="toIndexPage">
@@ -148,6 +176,9 @@ export default {
     },
     invoices() {
       return store.computed.invoices.get();
+    },
+    invoicesLoading() {
+      return store.computed.invoicesLoading.get();
     },
     atCreatePage() {
       return this.$route.fullPath === "/create";

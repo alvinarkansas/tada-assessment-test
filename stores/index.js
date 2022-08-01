@@ -3,13 +3,18 @@ import dayjs from "dayjs";
 
 const useStore = defineStore("store", {
   state: () => {
-    return { screenWidth: 0, invoices: [] };
+    return {
+      screenWidth: 0,
+      invoices: [],
+      invoicesLoading: true,
+    };
   },
   actions: {
     setScreenWidth(value) {
       this.screenWidth = value;
     },
     async loadInvoices({ filter = "" }) {
+      this.invoicesLoading = true;
       const { find } = useStrapi4();
       const params = {
         populate: "*",
@@ -27,6 +32,7 @@ const useStore = defineStore("store", {
         amount: attributes.amount,
         status: attributes.status,
       }));
+      this.invoicesLoading = false;
     },
   },
 });
@@ -34,7 +40,11 @@ const useStore = defineStore("store", {
 export default {
   computed: {
     ...mapStores(useStore),
-    ...mapWritableState(useStore, ["screenWidth", "invoices"]),
+    ...mapWritableState(useStore, [
+      "screenWidth",
+      "invoices",
+      "invoicesLoading",
+    ]),
     ...mapActions(useStore, ["setScreenWidth", "loadInvoices"]),
   },
 };

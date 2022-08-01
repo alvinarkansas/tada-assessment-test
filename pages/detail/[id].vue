@@ -13,16 +13,42 @@
 
     <header class="flex items-center justify-between mb-8">
       <h1 class="text-4xl font-bold">
-        <span class="text-anodyne-500">#</span>{{ detail?.invoice_no }}
+        <template v-if="!loading">
+          <span class="text-anodyne-500">#</span>
+          {{ detail?.invoice_no }}
+        </template>
+        <div
+          v-else
+          class="
+            h-10
+            w-24
+            rounded-lg
+            bg-anodyne-300
+            dark:bg-anodyne-500
+            animate-pulse
+          "
+        />
       </h1>
       <div class="flex items-center gap-4">
         <NuxtLink :to="'/detail/' + $route.params.id + '/edit'">
-          <Button class="hidden md:flex bg-anodyne-500">Edit</Button>
+          <Button :disabled="loading" class="hidden md:flex bg-anodyne-500">
+            Edit
+          </Button>
         </NuxtLink>
-        <Button @click="deleteInvoice" class="hidden md:flex bg-error-200">
+        <Button
+          :disabled="loading"
+          loadingLabel="Deleting..."
+          @click="deleteInvoice"
+          class="hidden md:flex bg-error-200"
+        >
           Delete
         </Button>
-        <Button @click="markAsPaid" v-if="detail?.status !== 'paid'">
+        <Button
+          :disabled="loading"
+          loadingLabel="Updating..."
+          @click="markAsPaid"
+          v-if="detail?.status !== 'paid'"
+        >
           Mark as Paid
         </Button>
       </div>
@@ -32,59 +58,173 @@
       <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-y-8 grid-flow-dense">
         <div>
           <p class="mb-2">Project Description</p>
-          <p class="font-semibold text-lg leading-6">
+          <p v-if="!loading" class="font-semibold text-lg leading-6">
             {{ detail?.description }}
           </p>
+          <div
+            v-else
+            class="
+              h-5
+              w-28
+              rounded-md
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
 
         <div>
           <p class="mb-2">Payment Status</p>
-          <Badge :variant="detail?.status" class="capitalize">
+          <Badge v-if="!loading" :variant="detail?.status" class="capitalize">
             {{ detail?.status }}
           </Badge>
+          <div
+            v-else
+            class="
+              h-10
+              w-24
+              rounded-lg
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
 
         <div class="font-semibold md:font-normal md:text-right">
           <p class="mb-2 font-normal md:hidden">Bill Address</p>
-          <p>{{ detail?.recipient_street }}</p>
-          <p>{{ detail?.recipient_city }}</p>
-          <p>{{ detail?.recipient_zip }}</p>
-          <p>{{ detail?.recipient_country }}</p>
+          <template v-if="!loading">
+            <p>{{ detail?.recipient_street }}</p>
+            <p>{{ detail?.recipient_city }}</p>
+            <p>{{ detail?.recipient_zip }}</p>
+            <p>{{ detail?.recipient_country }}</p>
+          </template>
+          <template v-else>
+            <div
+              class="
+                h-5
+                w-36
+                rounded-md
+                bg-anodyne-300
+                dark:bg-anodyne-500
+                animate-pulse
+                mb-2
+              "
+            />
+            <div
+              class="
+                h-5
+                w-44
+                rounded-md
+                bg-anodyne-300
+                dark:bg-anodyne-500
+                animate-pulse
+                mb-2
+              "
+            />
+            <div
+              class="
+                h-5
+                w-36
+                rounded-md
+                bg-anodyne-300
+                dark:bg-anodyne-500
+                animate-pulse
+                mb-2
+              "
+            />
+            <div
+              class="
+                h-5
+                w-32
+                rounded-md
+                bg-anodyne-300
+                dark:bg-anodyne-500
+                animate-pulse
+              "
+            />
+          </template>
         </div>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4">
         <div>
           <p class="mb-2">Client</p>
-          <p class="font-semibold text-lg leading-6">
+          <p v-if="!loading" class="font-semibold text-lg leading-6">
             {{ detail?.recipient_name }}
           </p>
+          <div
+            v-else
+            class="
+              h-5
+              w-28
+              rounded-md
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
 
         <div>
           <p class="mb-2">Due Date</p>
-          <p class="font-semibold text-lg leading-6">
+          <p v-if="!loading" class="font-semibold text-lg leading-6">
             {{ $dayjs(detail?.due_date).format("DD MMM YYYY") }}
           </p>
+          <div
+            v-else
+            class="
+              h-5
+              w-28
+              rounded-md
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
 
         <div>
           <p class="mb-2">Payment Terms</p>
-          <p class="font-semibold text-lg leading-6">
+          <p v-if="!loading" class="font-semibold text-lg leading-6">
             {{ detail?.payment_term }}
           </p>
+          <div
+            v-else
+            class="
+              h-5
+              w-28
+              rounded-md
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
 
         <div>
           <p class="mb-2">Sent To</p>
-          <p class="font-semibold text-lg leading-6">
+          <p v-if="!loading" class="font-semibold text-lg leading-6">
             {{ detail?.recipient_email }}
           </p>
+          <div
+            v-else
+            class="
+              h-5
+              w-28
+              rounded-md
+              bg-anodyne-300
+              dark:bg-anodyne-500
+              animate-pulse
+            "
+          />
         </div>
       </div>
 
       <div>
         <p class="text-lg">Items</p>
+        <span class=""></span>
         <div class="overflow-x-auto overflow-y-hidden rounded-lg divide-y-2">
           <div class="overflow-x-auto">
             <table class="min-w-full bg-anodyne-200 dark:bg-anodyne-600">
@@ -146,7 +286,18 @@
             "
           >
             <p>Total</p>
-            <p>{{ $currency(detail?.amount) }}</p>
+            <p v-if="!loading">{{ $currency(detail?.amount) }}</p>
+            <div
+              v-else
+              class="
+                h-5
+                w-28
+                rounded-md
+                bg-anodyne-300
+                dark:bg-anodyne-500
+                animate-pulse
+              "
+            />
           </div>
         </div>
       </div>
@@ -154,7 +305,7 @@
 
     <section class="flex flex-col gap-4 md:hidden">
       <NuxtLink :to="'/detail/' + $route.params.id + '/edit'">
-        <Button class="bg-anodyne-500 w-full">Edit</Button>
+        <Button :disabled="loading" class="bg-anodyne-500 w-full">Edit</Button>
       </NuxtLink>
       <Button @click="deleteInvoice" class="bg-error-200">Delete</Button>
     </section>
@@ -183,6 +334,7 @@ export default {
   data() {
     return {
       detail: {},
+      loading: true,
     };
   },
   components: {
@@ -192,10 +344,12 @@ export default {
   },
   methods: {
     async loadInvoiceDetail() {
+      this.loading = true;
       const { data } = await this.findOne("invoices", this.$route.params.id, {
         populate: "*",
       });
       this.detail = data.attributes;
+      this.loading = false;
     },
     toDetailPage() {
       this.$router.push({ path: "/detail/" + this.$route.params.id });
